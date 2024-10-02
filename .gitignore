@@ -1,0 +1,15 @@
+**/*~
+**/*.pyc
+**/*.orig
+**/*.tmp
+**/*.egg-info
+**/*.aux
+**/*.out
+**/*.log
+**/*.toc
+**/__pycache__/*
+**/.ipynb_checkpoints/*
+**/.pytest_cache/*
+**/.build/
+**/build/
+**/dm/*
