@@ -1,4 +1,9 @@
-__version__ = '0.1'  # 0.1+hg4.e6508d1e0b47.local20240728
+from importlib.metadata import version, PackageNotFoundError
+try:
+    __version__ = version('floopy')
+except PackageNotFoundError:
+    __version__ = 'unknown'
+
 
 from .basesystem import (
     Task,

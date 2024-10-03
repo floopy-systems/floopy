@@ -1,10 +1,9 @@
 from setuptools import setup, find_packages
-from floopy import __version__
 
 setup(
     name='floopy',
     licence='GPL 3',
-    version=__version__,
+    version='0.1',  # 0.1+hg4.e6508d1e0b47.local20240728
     author='Friedrich Hagedorn',
     author_email='friedrich_h@gmx.de',
     url='https://github.com/fhgd/floopy',
@@ -19,5 +18,6 @@ setup(
         'tzlocal',
         'getmac',
         'rich',
+        'seaborn',  # tutorial.ipynb
     ],
 )
