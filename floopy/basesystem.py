@@ -504,6 +504,8 @@ class Input(_PathNode):
         #   which is not a focus for the next release!
         # use default-value as class-attribute
         name, new_obj = fdct._filter_node(parent_name, name, default, level)
+        if hasattr(new_obj, '_auto_inputs'):
+            new_obj._auto_inputs(self, fdct, parent_name, level)
         fdct._inputs[name] = self
         ### create new sub-classed object
         #       not necessary

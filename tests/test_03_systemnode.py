@@ -167,6 +167,14 @@ def test_static_input_limits():
         task._check_input_limits(dm)
 
 
+def test_default_auto_input():
+    class MyTest(Task):
+        x = Input(min=3, max=5, default=loop_lin(num=3))
+
+    assert MyTest.x.start._value == 3
+    assert MyTest.x.stop._value == 5
+
+
 def test_dm_auto_input_min_max():
     class MyTest(Task):
         g = Input(min=1, default=2, max=3)
