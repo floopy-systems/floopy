@@ -1,36 +1,34 @@
-FLooPy
-======
-> *Flow-based Loops with Python*
+<h3 align="center">
+    <img width="66%" src="logo-floopy.svg">
+    <br><em>Tester-Agnostic Sequencer for Hardware-Testing in Python</em>
+    <hr />
+</h3>
 
-*FLooPy* is a **tester-agnostic sequencer** for **hardware-testing.** It has a **low-code** approach in which the same test can be performed within different **test-environments.**
-
-#### Tests
+### Tests
+* ... can performed within different **test-environments**
 * ... can organized in **hierarchical** layers with (sub-) tasks
+* ... can have `setup`, `task/test`, `teardown`, `final` and output functions
 * Every variable
-    - ... has an unique name via **namespace**
+    - ... has an unique **namespace**
     - ... is stored as a **time-signal** with timestamps
     - ... can be **sub-classed**
-* Data dependencies between functions are resolved by a graph-based approach
+* Data **dependencies** between functions are **resolved** by a graph-based approach
 * Auto-Save for loop-recovery and post-processing (experimental)
 * Can handle **non-reentrant** tests by an extra extension (unpublished)
 
-#### Loops
+### Loops
 * Flexible **loop configuration** (nested, zipped, concatenated)
 * Standard loops: `loop_items`, `loop_lin`, `loop_log`, `loop_bisect`
-* Feedback for HiL possible
+* Feedback for **HiL** possible
 
----
-
-## Test-Structure by Example
-
-For a Getting-Started example look into the *[FLooPy-Tutorial](./tutorial.ipynb)*.
+## Getting Started
 
 Suppose we want to test if the internal resistance of an battery `rbat` is inside the test-limits:
 
 * The test-environment is abstracted by the namespace of the `dut` input and must be specified later, just before running the test-case.
-* The loop over the load-current can be either configured locally inside the test-case or later, just before running the test-case.
+* The loop over the load current `i_load` can be either configured locally inside the test-case or later, just before running the test-case.
 
-#### Test-Case
+### Test-Case
 
 
 ```python
@@ -40,7 +38,7 @@ import floopy as fly
 class Test_Rbat_Charged(fly.Task):
     dut = fly.Input()  # object to stimulate device-under-test and measure response
    
-    i_load = fly.Input(min=0, max=1.5, unit='A', default=fly.loop_lin(num=5))
+    i_load = fly.Input(min=0, max=1.5, unit='A', default=fly.loop_lin(num=3))
     
     def task(dut, i_load):
         dut.current = i_load
@@ -55,7 +53,7 @@ class Test_Rbat_Charged(fly.Task):
         return coeffs[0]
 ```
 
-#### Test-Plan
+### Test-Plan
 
 Now, the test-case `Test_Rbat_Charged` can be used with different loop-configurations and within different test-environments. For demonstration we just use the simple resistor equation as a simulation-environment.
 
@@ -70,38 +68,97 @@ class TestPlan_BatterCheck(fly.Task):
                 return resistance * self.current
         return Dut()
 
-    test_rbat_charged = Test_Rbat_Charged(dut, i_load=fly.loop_log(0.1, 1, num=3))
+    test_rbat_charged = Test_Rbat_Charged(dut, i_load=fly.loop_log(0.1, 1, num=5))
 ```
 
+Note, that we changed the default loop-configuration of `i_load` to a logarithmic scaling.
+
+In order to perform the Test-Plan we need a `DataManager` saving all loop-states and measurement results as time-signals in a json-file.
 
 ```python
-dm = fly.DataManager()
-dm.run_log(TestPlan_BatterCheck)
+>>> dm = fly.DataManager()
+>>> dm.run_live(TestPlan_BatterCheck)
+
+╭─ TestPlan_BatterCheck ─╮
+│  ✔  test_rbat_charged  │
+╰────────────────────────╯
+File: dm/dm_2024-10-10_16:00:29.json
 ```
 
-Output:
+The test results and all variables can be analyzed via pandas-tables.
 
-<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #7fbfbf; text-decoration-color: #7fbfbf">[22:35:02]</span>  <span style="color: #268bd2; text-decoration-color: #268bd2; font-weight: bold">test_rbat_charged.task</span> | test_rbat_charged.<span style="color: #cb4b16; text-decoration-color: #cb4b16">i_load</span>=0.1
-<span style="color: #7fbfbf; text-decoration-color: #7fbfbf; font-weight: bold">[</span><span style="color: #7fbfbf; text-decoration-color: #7fbfbf">22:35:02</span><span style="color: #7fbfbf; text-decoration-color: #7fbfbf; font-weight: bold">]</span>      = 0.08000000000000002
-<span style="color: #7fbfbf; text-decoration-color: #7fbfbf">[22:35:02]</span>  <span style="color: #268bd2; text-decoration-color: #268bd2; font-weight: bold">test_rbat_charged.task</span> | test_rbat_charged.<span style="color: #cb4b16; text-decoration-color: #cb4b16">i_load</span>=0.31622776601683794
-<span style="color: #7fbfbf; text-decoration-color: #7fbfbf; font-weight: bold">[</span><span style="color: #7fbfbf; text-decoration-color: #7fbfbf">22:35:02</span><span style="color: #7fbfbf; text-decoration-color: #7fbfbf; font-weight: bold">]</span>      = 0.2529822128134704
-<span style="color: #7fbfbf; text-decoration-color: #7fbfbf">[22:35:02]</span>  <span style="color: #268bd2; text-decoration-color: #268bd2; font-weight: bold">test_rbat_charged.task</span> | test_rbat_charged.<span style="color: #cb4b16; text-decoration-color: #cb4b16">i_load</span>=1.0
-<span style="color: #7fbfbf; text-decoration-color: #7fbfbf; font-weight: bold">[</span><span style="color: #7fbfbf; text-decoration-color: #7fbfbf">22:35:02</span><span style="color: #7fbfbf; text-decoration-color: #7fbfbf; font-weight: bold">]</span>      = 0.8
-<span style="color: #7fbfbf; text-decoration-color: #7fbfbf">[22:35:02]</span>  <span style="color: #268bd2; text-decoration-color: #268bd2; font-weight: bold">test_rbat_charged.final_fit</span>
-<span style="color: #7fbfbf; text-decoration-color: #7fbfbf; font-weight: bold">[</span><span style="color: #7fbfbf; text-decoration-color: #7fbfbf">22:35:02</span><span style="color: #7fbfbf; text-decoration-color: #7fbfbf; font-weight: bold">]</span>      = <span style="color: #268bd2; text-decoration-color: #268bd2">array</span><span style="font-weight: bold">([</span>8.00000000e-01, 1.59768407e-16<span style="font-weight: bold">])</span>
-<span style="color: #7fbfbf; text-decoration-color: #7fbfbf">[22:35:02]</span>  <span style="color: #268bd2; text-decoration-color: #268bd2; font-weight: bold">test_rbat_charged.rbat</span>
-<span style="color: #7fbfbf; text-decoration-color: #7fbfbf; font-weight: bold">[</span><span style="color: #7fbfbf; text-decoration-color: #7fbfbf">22:35:02</span><span style="color: #7fbfbf; text-decoration-color: #7fbfbf; font-weight: bold">]</span>      = 0.7999999999999999
-<span style="color: #7fbfbf; text-decoration-color: #7fbfbf">[22:35:02]</span>  <span style="color: #268bd2; text-decoration-color: #268bd2; font-weight: bold">test_rbat_charged.rbat.check</span>
-<span style="color: #7fbfbf; text-decoration-color: #7fbfbf; font-weight: bold">[</span><span style="color: #7fbfbf; text-decoration-color: #7fbfbf">22:35:02</span><span style="color: #7fbfbf; text-decoration-color: #7fbfbf; font-weight: bold">]</span>      = <span style="color: #859900; text-decoration-color: #859900; font-weight: bold; font-style: italic">True</span>
+```python
+>>> dm.read_task(TestPlan_BatterCheck)
+```
+<div>
+<table border="1" class="dataframe">
+  <thead>
+    <tr>
+      <th colspan="2" halign="left">test_rbat_charged</th>
+    </tr>
+    <tr>
+      <th>rbat</th>
+      <th>check</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0.8</td>
+      <td>True</td>
+    </tr>
+  </tbody>
+</table>
+</div>
 
-Summery: <span style="color: #859900; text-decoration-color: #859900">1 passed</span>
+```python
+>>> tp = TestPlan_BatterCheck()
+>>> dm.read_task(tp.test_rbat_charged.task)
+```
+<div>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>i_load</th>
+      <th>__return__</th>
+    </tr>
+    <tr>
+      <th>TestPlan_BatterCheck.test_rbat_charged.i_load</th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0.100000</th>
+      <td>0.100000</td>
+      <td>0.080000</td>
+    </tr>
+    <tr>
+      <th>0.177828</th>
+      <td>0.177828</td>
+      <td>0.142262</td>
+    </tr>
+    <tr>
+      <th>0.316228</th>
+      <td>0.316228</td>
+      <td>0.252982</td>
+    </tr>
+    <tr>
+      <th>0.562341</th>
+      <td>0.562341</td>
+      <td>0.449873</td>
+    </tr>
+    <tr>
+      <th>1.000000</th>
+      <td>1.000000</td>
+      <td>0.800000</td>
+    </tr>
+  </tbody>
+</table>
+</div>
 
-File: dm/dm_2024-10-08_22:35:02.json
-</pre>
-
-
-
-For a real measurement we just need to replace the `dut` function with something like
+For a real measurement we leave the test-case unchanged and just need to replace the `dut` function in the test-plan with something like
 
 ```python
 def dut():
@@ -120,8 +177,6 @@ dut.current
 with an equal behavior.
 
 *Further information can be found in the **[FLooPy-Tutorial](./tutorial.ipynb)** which is more detailed.*
-
----
 
 ## Install
 
