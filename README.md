@@ -1,5 +1,5 @@
 <h3 align="center">
-    <img width="66%" src="logo-floopy.svg">
+    <img width="66%" alt="FLooPy" src="https://raw.githubusercontent.com/floopy-systems/floopy/refs/heads/main/logo-floopy.svg">
     <br><em>Tester-Agnostic Sequencer for Hardware-Testing in Python</em>
     <hr />
 </h3>

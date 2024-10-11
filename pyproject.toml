@@ -8,7 +8,7 @@ packages = ["floopy"]
 
 [project]
 name = "floopy"
-version = "0.1"
+version = "0.1.1"
 dependencies = [
     "numpy",
     "pandas",
@@ -24,8 +24,7 @@ description = "Tester-Agnostic Sequencer for Hardware-Testing in Python"
 keywords = ["test", "sequencer", "task", "loop", "sweep"]
 authors = [{name = "Friedrich Hagedorn", email = "friedrich_h@gmx.de"}]
 readme = "README.md"
-license = {file = "LICENSE"}
+license = {text = "GPL 3"}
 
 [project.urls]
 Repository = "https://github.com/floopy-systems/floopy"
-Issues = "https://github.com/floopy-systems/floopy/issues"
