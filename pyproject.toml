@@ -8,7 +8,7 @@ packages = ["floopy"]
 
 [project]
 name = "floopy"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
     "numpy",
     "pandas",
@@ -27,4 +27,4 @@ readme = "README.md"
 license = {text = "GPL 3"}
 
 [project.urls]
-Repository = "https://github.com/floopy-systems/floopy"
+Homepage = "https://github.com/floopy-systems/floopy"
