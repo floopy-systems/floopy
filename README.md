@@ -21,6 +21,12 @@
 * Standard loops: `loop_items`, `loop_lin`, `loop_log`, `loop_bisect`
 * Feedback for **HiL** possible
 
+## Demo Example
+
+[![FLooPy - A Tester-Agnostic Sequencer for Hardware-Testing with Python (deutsch)](https://img.youtube.com/vi/2eOq-46hzmM/0.jpg)](https://www.youtube.com/watch?v=2eOq-46hzmM)
+
+(For now only in german, sorry.)
+
 ## Getting Started
 
 Suppose we want to test if the internal resistance of an battery `rbat` is inside the test-limits:
